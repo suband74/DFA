@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: db_dfa
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: db_base
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_pwd
+
+  web:
+    container_name: web_dfa
+    build: .
+    command: bash -c "python dfa_media/manage.py runserver 0.0.0.0:8000"
+    # python dfa_media/manage.py migrate --noinput && 
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
