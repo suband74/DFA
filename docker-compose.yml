@@ -12,8 +12,7 @@ services:
   web:
     container_name: web_dfa
     build: .
-    command: bash -c "python dfa_media/manage.py runserver 0.0.0.0:8000"
-    # python dfa_media/manage.py migrate --noinput && 
+    command: bash -c "python dfa_media/manage.py migrate --noinput && python dfa_media/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:

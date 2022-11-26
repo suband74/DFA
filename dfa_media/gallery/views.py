@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .models import PhotoCollection
-from .serializers import ImageSerializer, CreateImageSerializer
+from .serializers import ImageSerializer, CreateImageSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -51,7 +51,6 @@ class CustomDestroyModelMixin:
 class CRUDPhotoViewSet(
     CustomCreateModelMixin,
     mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
     CustomDestroyModelMixin,
     mixins.ListModelMixin,
     GenericViewSet,
@@ -62,6 +61,9 @@ class CRUDPhotoViewSet(
 
 
 class DestroyAdminAll(APIView):
+    """
+    Destroy all model instance.
+    """
 
     permission_classes = [IsAdminUser]
 
@@ -70,6 +72,15 @@ class DestroyAdminAll(APIView):
         try:
             shutil.rmtree("dfa_media/media")
         except OSError:
-            Response("There is no such directory")
+            return Response({"error": "There is no such directory"})
 
         return Response({"Message": "image deleted"})
+
+
+class CurrentUserView(APIView):
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        if serializer.data["id"]:
+            return Response(serializer.data)
+        else:
+            return Response ({"пользователь": "не определен"})
